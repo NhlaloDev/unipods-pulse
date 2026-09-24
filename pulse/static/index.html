@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pulse · UniPods</title>
+<style>
+  :root {
+    --navy: #0f1d3d; --navy-2: #1b2c57; --gold: #f2cf1d; --bg: #f5f6fa; --card: #fff;
+    --ink: #1a2238; --muted: #6b7390; --line: #e3e6ef; --me: #0f1d3d; --chip: #fff6c7;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0b1225; --card: #131c35; --ink: #e8ebf5; --muted: #98a0bd; --line: #25304f; --me: #2a3d73; --chip: #3a3413; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--ink); }
+  header { background: var(--navy); color: #fff; padding: 14px 20px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  header .logo { width: 38px; height: 38px; border-radius: 10px; background: var(--gold); color: var(--navy); display: grid; place-items: center; font-weight: 800; font-size: 20px; }
+  header h1 { font-size: 18px; margin: 0; }
+  header small { color: var(--gold); display: block; font-size: 12px; }
+  header .stats { margin-left: auto; font-size: 12px; color: #c9d0e6; }
+  nav { display: flex; gap: 4px; padding: 0 16px; background: var(--navy-2); }
+  nav button { background: none; border: 0; color: #c9d0e6; padding: 10px 14px; font: inherit; cursor: pointer; border-bottom: 3px solid transparent; }
+  nav button.on { color: #fff; border-color: var(--gold); }
+  main { max-width: 900px; margin: 0 auto; padding: 16px; }
+  .panel { display: none; } .panel.on { display: block; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
+  #log { height: calc(100vh - 260px); min-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 4px 2px 12px; }
+  .msg { max-width: 85%; padding: 10px 14px; border-radius: 14px; white-space: pre-wrap; word-wrap: break-word; }
+  .msg.me { align-self: flex-end; background: var(--me); color: #fff; border-bottom-right-radius: 4px; }
+  .msg.bot { align-self: flex-start; background: var(--card); border: 1px solid var(--line); border-bottom-left-radius: 4px; }
+  .msg .cite { background: var(--chip); border-radius: 6px; padding: 0 5px; font-size: 12.5px; color: var(--ink); }
+  .msg.typing { color: var(--muted); font-style: italic; }
+  form.ask { display: flex; gap: 8px; margin-top: 10px; }
+  input, select { font: inherit; padding: 11px 13px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
+  form.ask input { flex: 1; }
+  button.go { background: var(--gold); color: var(--navy); border: 0; font-weight: 700; padding: 11px 18px; border-radius: 10px; cursor: pointer; font: inherit; font-weight: 700; }
+  button.go:disabled { opacity: .5; cursor: wait; }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .chips button { border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 999px; padding: 6px 12px; cursor: pointer; font: inherit; font-size: 13px; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  #digestOut { margin-top: 14px; white-space: pre-wrap; }
+  .drop { display: block; border: 2px dashed var(--line); border-radius: 14px; padding: 26px; text-align: center; color: var(--muted); cursor: pointer; }
+  .drop.over { border-color: var(--gold); background: var(--chip); }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  td, th { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; }
+  .tag { font-size: 11px; padding: 2px 8px; border-radius: 999px; background: var(--chip); }
+  .muted { color: var(--muted); font-size: 13px; }
+  a.x { color: #c0392b; cursor: pointer; font-size: 13px; }
+  h2 { font-size: 16px; margin: 0 0 10px; }
+  @media (max-width: 600px) { .msg { max-width: 95%; } header .stats { margin-left: 0; width: 100%; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">P</div>
+  <div><h1 id="botName">Pulse</h1><small id="groupName">UniPods group memory</small></div>
+  <div class="stats" id="stats"></div>
+</header>
+<nav>
+  <button class="on" data-tab="chat">Ask</button>
+  <button data-tab="catchup">Catch me up</button>
+  <button data-tab="kb">Knowledge base</button>
+</nav>
+<main>
+  <section class="panel on" id="chat">
+    <div id="log"></div>
+    <form class="ask" id="askForm">
+      <input id="q" placeholder="Ask anything that was discussed in chats or meetings…" autocomplete="off">
+      <button class="go" id="send">Ask</button>
+    </form>
+    <div class="chips">
+      <button data-q="catch me up">🗞️ Catch me up (7 days)</button>
+      <button data-q="last meeting">🎥 Last meeting recap</button>
+      <button data-q="What deadlines are coming up?">⏰ Upcoming deadlines</button>
+      <button data-q="What are the action items and who owns them?">✅ Action items</button>
+      <button data-q="reset">🧹 New conversation</button>
+    </div>
+  </section>
+
+  <section class="panel" id="catchup">
+    <div class="card">
+      <h2>What did I miss?</h2>
+      <div class="row">
+        <label>From <input type="date" id="since"></label>
+        <label>to <input type="date" id="until"></label>
+        <button class="go" id="digestBtn">Summarise</button>
+      </div>
+      <div class="chips">
+        <button data-since="today">Today</button><button data-since="yesterday">Since yesterday</button>
+        <button data-since="3 days">Last 3 days</button><button data-since="week">Last week</button>
+        <button data-since="month">Last month</button>
+      </div>
+      <div id="digestOut" class="muted">Pick a period to get decisions, deadlines, meeting recaps and unanswered questions.</div>
+    </div>
+  </section>
+
+  <section class="panel" id="kb">
+    <div class="card">
+      <h2>Add knowledge</h2>
+      <p class="muted">WhatsApp: open the group → ⋮ → More → <b>Export chat</b> (without media) and upload the .txt or .zip.
+        Re-uploading newer exports is safe; duplicates are skipped. Meetings: upload Teams/Zoom/Meet transcripts (.vtt, .srt, .docx, .txt)
+        or the recording itself (.mp4/.m4a/.mp3). Documents: .pdf, .docx, .txt, .md.</p>
+      <div class="row" style="margin-bottom:10px">
+        <select id="kind"><option value="">Auto-detect type</option><option value="chat">Chat export</option><option value="meeting">Meeting transcript</option><option value="doc">Document</option></select>
+        <input id="token" type="password" placeholder="Admin token" style="flex:1;min-width:160px">
+      </div>
+      <label class="drop" id="drop">Drop files here or click to choose<input type="file" id="files" multiple hidden></label>
+      <div id="uploadOut" class="muted" style="margin-top:10px"></div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <h2>Sources</h2>
+      <table><thead><tr><th>Source</th><th>Type</th><th>Contents</th><th></th></tr></thead><tbody id="srcRows"></tbody></table>
+    </div>
+  </section>
+</main>
+<script>
+const $ = s => document.querySelector(s);
+let session = null;
+try { session = localStorage.getItem("pulse_session"); } catch (e) {}
+if (!session) { session = "web:" + Math.random().toString(36).slice(2); try { localStorage.setItem("pulse_session", session); } catch (e) {} }
+try { $("#token").value = localStorage.getItem("pulse_token") || ""; } catch (e) {}
+$("#token").addEventListener("change", e => { try { localStorage.setItem("pulse_token", e.target.value); } catch (_) {} });
+
+function esc(s) { return s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+function render(text) {
+  let h = esc(text);
+  h = h.replace(/(https?:\/\/[^\s)\]]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+  h = h.replace(/\*([^*\n]+)\*/g, "<b>$1</b>").replace(/(^|\s)_([^_\n]+)_/g, "$1<i>$2</i>");
+  h = h.replace(/\[([^\]\n]{2,80})\]/g, '<span class="cite">$1</span>');
+  return h;
+}
+function add(role, text) {
+  const d = document.createElement("div");
+  d.className = "msg " + role;
+  d.innerHTML = role === "me" ? esc(text) : render(text);
+  $("#log").appendChild(d); $("#log").scrollTop = 1e9;
+  return d;
+}
+async function api(path, opts = {}) {
+  opts.headers = Object.assign({"X-Admin-Token": $("#token").value}, opts.headers || {});
+  const r = await fetch(path, opts);
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(data.detail || r.statusText);
+  return data;
+}
+async function ask(text) {
+  if (!text.trim()) return;
+  add("me", text); $("#q").value = ""; $("#send").disabled = true;
+  const t = add("bot typing", "Reading the chats and meetings…");
+  try {
+    const {reply} = await api("/api/chat", {method: "POST", headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({text, session_id: session})});
+    t.remove(); add("bot", reply);
+  } catch (e) { t.remove(); add("bot", "⚠️ " + e.message); }
+  $("#send").disabled = false; $("#q").focus(); loadInfo();
+}
+$("#askForm").onsubmit = e => { e.preventDefault(); ask($("#q").value); };
+document.querySelectorAll("[data-q]").forEach(b => b.onclick = () => ask(b.dataset.q));
+
+document.querySelectorAll("nav button").forEach(b => b.onclick = () => {
+  document.querySelectorAll("nav button, .panel").forEach(x => x.classList.remove("on"));
+  b.classList.add("on"); $("#" + b.dataset.tab).classList.add("on");
+  if (b.dataset.tab === "kb") loadSources();
+});
+
+async function digest(since, until) {
+  $("#digestOut").className = "muted"; $("#digestOut").textContent = "Summarising… this can take a little while for long periods.";
+  try {
+    const {reply} = await api("/api/digest", {method: "POST", headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({since, until: until || null})});
+    $("#digestOut").className = ""; $("#digestOut").innerHTML = render(reply);
+  } catch (e) { $("#digestOut").textContent = "⚠️ " + e.message; }
+}
+$("#digestBtn").onclick = () => $("#since").value ? digest($("#since").value, $("#until").value) : digest("week");
+document.querySelectorAll("[data-since]").forEach(b => b.onclick = () => digest(b.dataset.since));
+
+async function upload(files) {
+  if (!files.length) return;
+  const fd = new FormData();
+  [...files].forEach(f => fd.append("files", f)); fd.append("kind", $("#kind").value);
+  $("#uploadOut").textContent = "Uploading and reading " + files.length + " file(s)…";
+  try {
+    const {results} = await api("/api/upload", {method: "POST", body: fd});
+    $("#uploadOut").innerHTML = results.map(r => r.error ? `❌ ${esc(r.name)}: ${esc(r.error)}` : `✅ ${esc(r.name)}: ${esc(r.detail)}`).join("<br>");
+  } catch (e) { $("#uploadOut").textContent = "⚠️ " + e.message; }
+  loadSources(); loadInfo();
+}
+$("#files").onchange = e => upload(e.target.files);
+const drop = $("#drop");
+drop.ondragover = e => { e.preventDefault(); drop.classList.add("over"); };
+drop.ondragleave = () => drop.classList.remove("over");
+drop.ondrop = e => { e.preventDefault(); drop.classList.remove("over"); upload(e.dataTransfer.files); };
+
+async function loadSources() {
+  const rows = await api("/api/sources");
+  $("#srcRows").innerHTML = rows.length ? rows.map(s => `<tr>
+    <td>${esc(s.name)}<div class="muted">${s.doc_date || s.created_at.slice(0,10)}</div></td>
+    <td><span class="tag">${s.kind}</span></td>
+    <td class="muted">${s.kind === "chat" ? `${s.n_messages} messages · last ${(s.last_message||"").slice(0,16)}` : `${s.n_chunks} chunks · ${s.status}`}</td>
+    <td>${s.status === "summary failed" ? `<a class="x" style="color:inherit" data-resum="${s.id}">retry summary</a><br>` : ""}<a class="x" data-del="${s.id}">remove</a></td></tr>`).join("") : '<tr><td colspan="4" class="muted">Nothing yet, upload a chat export or transcript.</td></tr>';
+  document.querySelectorAll("[data-del]").forEach(a => a.onclick = async () => {
+    if (!confirm("Remove this source from the knowledge base?")) return;
+    try { await api("/api/sources/" + a.dataset.del, {method: "DELETE"}); } catch (e) { alert(e.message); }
+    loadSources(); loadInfo();
+  });
+  document.querySelectorAll("[data-resum]").forEach(a => a.onclick = async () => {
+    try { await api(`/api/meetings/${a.dataset.resum}/resummarise`, {method: "POST"}); } catch (e) { alert(e.message); }
+    setTimeout(loadSources, 500);
+  });
+}
+async function loadInfo() {
+  const i = await api("/api/info");
+  $("#botName").textContent = i.bot; $("#groupName").textContent = i.group; document.title = i.bot + " · UniPods";
+  $("#stats").textContent = `${i.messages.toLocaleString()} messages · ${i.meetings} meetings · ${i.documents} docs` + (i.last ? ` · up to ${i.last.slice(0,10)}` : "");
+  if (!$("#log").children.length) add("bot", `Hi! I'm *${i.bot}*. I've read the group's chats, meetings and documents. Ask me anything you missed, or tap *Catch me up*.`);
+}
+loadInfo();
+</script>
+</body>
+</html>

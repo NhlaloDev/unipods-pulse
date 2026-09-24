@@ -1,0 +1,30 @@
+15/09/2026, 08:02 - Messages and calls are end-to-end encrypted. Only people in this chat can read, listen to, or share them. Learn more.
+15/09/2026, 08:05 - Programme Office: Good morning cohort! Reminder: Week 3 live session is Wednesday 16 Sept at 14:00 SAST on Teams. Link is pinned.
+15/09/2026, 08:11 - Amara (Nigeria): Morning all 🙌 Is the session going to be recorded?
+15/09/2026, 08:15 - Programme Office: Yes, recordings go to the shared drive within 48 hours.
+15/09/2026, 09:40 - Kwame: Does anyone know how to get the free cloud credits mentioned last week?
+15/09/2026, 09:52 - Lindiwe: @Kwame fill in the credits form in the resources folder, use your university email. Took me 2 days to get approved.
+15/09/2026, 12:30 - Programme Office: 📣 HACKATHON ANNOUNCED! Build a chatbot that helps the group keep up with chats and calls. $5,000 cash prize. Teams of up to 5, members can't all be from the same country, and each team needs at least one woman. Team declarations due COB Thursday 17 Sept, email subject "UniPods Hackathon".
+15/09/2026, 12:34 - Tendai (Zimbabwe): This is exactly what we need 😂 I have 400 unread messages
+15/09/2026, 12:41 - Amara (Nigeria): Looking for teammates! I do backend + ML. Anyone doing frontend?
+15/09/2026, 12:44 - Nhlalenhle: @Amara I'm in, South Africa here, I can do full stack
+15/09/2026, 13:02 - Kwame: When is the hackathon deadline?
+15/09/2026, 13:05 - Lindiwe: Hackathon runs Friday 18 Sept to Thursday 24 Sept
+15/09/2026, 16:20 - Sipho: Does the chatbot have to work on WhatsApp specifically?
+16/09/2026, 07:55 - Programme Office: Reminder: live session today 14:00 SAST. Guest speaker: Dr. Naledi Mokoena on responsible AI.
+16/09/2026, 10:10 - Fatima (Kenya): Can someone share the slides from week 2? I missed it
+16/09/2026, 10:12 - Programme Office: Week 2 slides are in the shared drive under /Week 2/Slides
+16/09/2026, 15:30 - Tendai (Zimbabwe): Great session! Dr. Mokoena's point about consent for data in group chats is important for the hackathon
+16/09/2026, 18:45 - Kwame: What's the hackathon deadline again?
+16/09/2026, 18:47 - Amara (Nigeria): @Kwame Thursday 24 Sept 😅 it's been answered like 3 times
+17/09/2026, 09:00 - Programme Office: Update: individual assignment 2 (AI use-case canvas) deadline moved from 19 Sept to Friday 25 Sept 23:59, because of the hackathon.
+17/09/2026, 11:15 - Fatima (Kenya): Is the assignment submitted on the portal or by email?
+17/09/2026, 11:20 - Programme Office: Portal please, under Assignments > Canvas.
+17/09/2026, 16:58 - Nhlalenhle: Team "Amajor Pulse" declared ✅ Nhlalenhle (South Africa), Amara (Nigeria), Fatima (Kenya)
+18/09/2026, 08:30 - Programme Office: Hackathon is live! Judging will be done by the whole group; more info on judging criteria to follow. Submissions need: a working chatbot (not slides), access to the repo, and short setup notes.
+18/09/2026, 09:14 - Sipho: Are we allowed to use paid APIs like OpenAI or Claude?
+19/09/2026, 10:05 - Tendai (Zimbabwe): Office hours with mentors moved to Tuesdays 17:00 SAST from next week
+21/09/2026, 14:22 - Lindiwe: Reminder that Demo Day is 2 October at the Innovation Hub, in person + streamed
+22/09/2026, 08:10 - Programme Office: Week 4 live session tomorrow (Wed 23 Sept) 14:00 SAST. Topic: taking AI prototypes to production.
+23/09/2026, 16:40 - Fatima (Kenya): Thanks for today's session, the deployment checklist was gold
+23/09/2026, 17:02 - Sipho: Did they say how hackathon submissions should be sent?
